@@ -4,9 +4,17 @@ on:
   push:
     branches:
       - 'master'
+        - 
+env:
+  AWS_DEFAULT_REGION: eu-central-1
+  AWS_DEFAULT_OUTPUT: json
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  CONTAINER_IMAGE: automation
 
 jobs:
-  ci:
+  cicd:
     runs-on: ubuntu-latest
     
     steps:
@@ -15,3 +23,11 @@ jobs:
        run: docker build -t conology/spring .
      - name: verify image exists
        run : docker images
+     - name: Setup ECR
+       run: |
+         $( aws ecr get-login --no-include-email )
+     - name: Tage the image
+       run: docker tag conology/spring $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE
+     - name: Push on AWS
+       run: docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE
+  
