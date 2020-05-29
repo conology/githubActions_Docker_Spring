@@ -1,0 +1,17 @@
+name: Spring with Docker on AWS CICD
+
+on: 
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    
+    steps:
+     - uses: actions/checkout@v1
+     - name: build Docker image
+       run: docker build -t conology/spring .
+     - name: verify image exists
+       run : docker images
