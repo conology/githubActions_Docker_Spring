@@ -19,6 +19,13 @@ jobs:
     
     steps:
      - uses: actions/checkout@v1
+     - name: create jar file
+       run: mvn clean install
+     - name: verify jar
+       run: |
+         dir
+         cd target
+         dir
      - name: build Docker image
        run: docker build -t conology/spring .
      - name: verify image exists
